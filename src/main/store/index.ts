@@ -54,7 +54,14 @@ export const defaultStore: AppStore = {
     }
   },
   shortcut: {
-    searchbarShortcut: 'Shift+Space'
+    searchbarShortcut: 'CmdOrCtrl+Shift+Space',
+    // 管理器快捷键
+    managerAddCategory: 'CmdOrCtrl+Shift+N',
+    managerRenameCategory: 'F2',
+    managerRemoveCategory: 'Delete',
+    managerAddCode: 'CmdOrCtrl+N',
+    managerRemoveCode: 'Delete',
+    managerToggleFavorite: 'CmdOrCtrl+D'
   }
 }
 

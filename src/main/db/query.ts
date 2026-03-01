@@ -17,7 +17,7 @@ import { getDB } from './connect'
 // 获取所有分类
 export async function getCategories(): Promise<Category[]> {
   const db = getDB()
-  return await db('categories').select('*').orderBy('created_at', 'desc')
+  return await db('categories').select('*').orderBy('sort_order', 'asc').orderBy('created_at', 'desc')
 }
 
 // 创建分类
@@ -32,6 +32,21 @@ export async function createCategory(data: CreateCategoryInput): Promise<number>
   return id
 }
 
+// 批量更新分类排序
+export async function updateCategoriesSortOrder(sortedIds: number[]): Promise<void> {
+  const db = getDB()
+
+  // 使用事务
+  await db.transaction(async (trx) => {
+    for (let i = 0; i < sortedIds.length; i++) {
+      await trx('categories').where('id', sortedIds[i]).update({
+        sort_order: i,
+        updated_at: new Date()
+      })
+    }
+  })
+}
+
 // 更新分类
 export async function updateCategory(id: number, data: UpdateCategoryInput): Promise<number> {
   const db = getDB()
@@ -41,6 +56,33 @@ export async function updateCategory(id: number, data: UpdateCategoryInput): Pro
       ...data,
       updated_at: new Date()
     })
+}
+
+// 批量更新代码片段分类
+export async function batchUpdateCategory(codeIds: number[], categoryId: number): Promise<number> {
+  const db = getDB()
+
+  if (codeIds.length === 0) return 0
+
+  // 使用事务确保
+  return await db.transaction(async (trx) => {
+    const result = await trx('codes').whereIn('id', codeIds).where('is_deleted', false).update({
+      category_id: categoryId,
+      updated_at: new Date()
+    })
+
+    return result
+  })
+}
+
+// 将某个分类下的所有代码片段移动到未分类（用于删除分类时）
+export async function moveCodesToUncategorized(categoryId: number): Promise<number> {
+  const db = getDB()
+
+  return await db('codes').where('category_id', categoryId).where('is_deleted', false).update({
+    category_id: 0,
+    updated_at: new Date()
+  })
 }
 
 // 删除分类
@@ -215,6 +257,19 @@ export async function getTrashCodes(): Promise<Code[]> {
   return await db('codes').where('is_deleted', true).orderBy('updated_at', 'desc')
 }
 
+// 清空回收站
+export async function clearTrash(): Promise<number> {
+  const db = getDB()
+
+  // 获取需要删除数据
+  const count = await db('codes').where('is_deleted', true).count('* as count').first()
+
+  // 执行删除
+  await db('codes').where('is_deleted', true).del()
+
+  return Number((count?.count as string) || '0')
+}
+
 // 获取收藏夹中的代码片段
 export async function getFavorites(): Promise<Code[]> {
   const db = getDB()
@@ -283,4 +338,33 @@ export async function getCodeByTag(tag: string): Promise<Code[]> {
     .whereRaw(`json_array_length(tags) > 0`)
     .whereRaw(`exists (select 1 from json_each(tags) where json_each.value = ? )`, [tag])
     .orderBy('created_at', 'desc')
+}
+
+// 获取所有唯一的标签列表
+export async function getTags(): Promise<string[]> {
+  const db = getDB()
+
+  // 查询所有非删除的代码片段标签
+  const codes = await db('codes').where('is_deleted', false).whereNotNull('tags').select('tags')
+
+  // 提取合并所有标签
+  const allTags = new Set<string>()
+
+  codes.forEach((code) => {
+    try {
+      const tags = JSON.parse(code.tags || '[]')
+      if (Array.isArray(tags)) {
+        tags.forEach((tag: string) => {
+          if (tag && typeof tag === 'string') {
+            // 统一转为小写
+            allTags.add(tag.toLowerCase().trim())
+          }
+        })
+      }
+    } catch (error) {
+      console.log('解析标签失败', code.tags)
+    }
+  })
+
+  return Array.from(allTags).sort()
 }

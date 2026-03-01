@@ -2,7 +2,7 @@ import type { Category, CreateCategoryInput, UpdateCategoryInput } from '@shared
 import { IPC_KEYS } from '@shared/constants'
 
 import { ipcMain } from 'electron'
-import { getCategories, createCategory, updateCategory, removeCategory } from '../db/query'
+import { getCategories, createCategory, updateCategory, removeCategory, updateCategoriesSortOrder } from '../db/query'
 
 /**
  * 初始化 分类 ipc 通信
@@ -35,6 +35,15 @@ export function initCategoryIpc() {
     } catch (error) {
       console.log('[IPC] 更新分类错误:', error)
       return -1
+    }
+  })
+
+  // 批量更新分类排序
+  ipcMain.handle(IPC_KEYS.CATEGOR_UPDATE_SORT_ORDER, async (_, sortedIds: number[]): Promise<void> => {
+    try {
+      return await updateCategoriesSortOrder(sortedIds)
+    } catch (error) {
+      console.log('[IPC] 批量更新分类排序失败:', error)
     }
   })
 

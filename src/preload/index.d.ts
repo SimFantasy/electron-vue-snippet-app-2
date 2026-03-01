@@ -71,6 +71,9 @@ export interface CategoryAPI {
   // 创建分类
   create: (data: CreateCategoryInput) => Promise<number>
 
+  // 批量更新分类排序
+  updateSortOrder: (sortedIds: number[]) => Promise<number>
+
   // 更新分类
   update: (id: number, data: UpdateCategoryInput) => Promise<number>
 
@@ -94,6 +97,12 @@ export interface CodeAPI {
   // 更新代码片段
   update: (id: number, data: UpdateCodeInput) => Promise<number>
 
+  // 批量更新代码片段分类
+  batchUpdateCategory: (codeIds: number[], categoryId: number) => Promise<number>
+
+  // 将分类下所有代码片段移动到未分类
+  moveToUncategorized: (categoryId: number) => Promise<number>
+
   // 硬删除代码片段
   remove: (id: number) => Promise<number>
 
@@ -105,6 +114,9 @@ export interface CodeAPI {
 
   // 获取回收站所有代码片段
   getTrashCodes: () => Promise<Code[]>
+
+  // 清空回收站
+  clearTrash: () => Promise<number>
 
   // 获取收藏夹所有代码片段
   getFavoriteCodes: () => Promise<Code[]>
@@ -120,6 +132,9 @@ export interface CodeAPI {
 
   // 根据标签获取代码片段
   getCodesByTag: (tag: string) => Promise<Code[]>
+
+  // 获取所有标签
+  getTags: () => Promise<string[]>
 }
 
 /**
@@ -157,6 +172,11 @@ export interface StoreAPI {
 
   // 设置配置项
   set: <K extends keyof AppStore, SK extends keyof AppStore[K]>(key: K, subKey: SK, value?: AppStore[K][SK]) => Promise<boolean>
+  // set: <K extends keyof AppStore>(key: K, value: AppStore[K]) => Promise<boolean>
+  // // 单个设置
+  // set: <K extends keyof AppStore, SK extends keyof AppStore[K]>(key: K, subKey: SK, value: AppStore[K][SK]) => Promise<boolean>
+  // // 实现
+  // set: (key: string, subKeyOrValue: unknown, value?: unknown) => Promise<boolean>
 
   // 获取默认配置项
   getDefault: () => Promise<AppStore>

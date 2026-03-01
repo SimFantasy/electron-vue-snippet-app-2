@@ -15,7 +15,11 @@ import {
   toggleFavorite,
   searchCode,
   getCodesCount,
-  getCodeByTag
+  getCodeByTag,
+  getTags,
+  clearTrash,
+  batchUpdateCategory,
+  moveCodesToUncategorized
 } from '../db/query'
 
 /**
@@ -62,6 +66,26 @@ export function initCodeIpc() {
     }
   })
 
+  // 批量更新代码片段分类
+  ipcMain.handle(IPC_KEYS.CODE_BATCH_UPDATE_CATEGORY, async (_, codeIds: number[], categoryId: number): Promise<number> => {
+    try {
+      return await batchUpdateCategory(codeIds, categoryId)
+    } catch (error) {
+      console.log('[IPC] 批量更新代码片段失败', error)
+      return -1
+    }
+  })
+
+  // 将分类下代码片段移动到未分类
+  ipcMain.handle(IPC_KEYS.CODE_MOVE_TO_UNCATEGORIZED, async (_, categoryId: number): Promise<number> => {
+    try {
+      return await moveCodesToUncategorized(categoryId)
+    } catch (error) {
+      console.log('[IPC] 移动代码片段到未分类失败:', error)
+      return -1
+    }
+  })
+
   // 硬删除代码片段(从数据库中彻底删除)
   ipcMain.handle(IPC_KEYS.CODE_DELETE, async (_, id: number): Promise<number> => {
     try {
@@ -99,6 +123,16 @@ export function initCodeIpc() {
     } catch (error) {
       console.log('[IPC] 获取回收站中的代码片段失败:', error)
       return []
+    }
+  })
+
+  // 清空回收站
+  ipcMain.handle(IPC_KEYS.CODE_CLEAR_TRASH, async (): Promise<number> => {
+    try {
+      return await clearTrash()
+    } catch (error) {
+      console.log('[IPC] 清空回收站:', error)
+      return -1
     }
   })
 
@@ -148,6 +182,16 @@ export function initCodeIpc() {
       return await getCodeByTag(tag)
     } catch (error) {
       console.log('[IPC] 根据标签获取代码片段失败:', error)
+      return []
+    }
+  })
+
+  // 获取所有标签
+  ipcMain.handle(IPC_KEYS.CODE_GET_ALL_TAGS, async () => {
+    try {
+      return await getTags()
+    } catch (error) {
+      console.log('[IPC] 获取所有标签失败:', error)
       return []
     }
   })

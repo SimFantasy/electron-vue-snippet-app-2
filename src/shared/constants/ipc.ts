@@ -25,6 +25,7 @@ export const IPC_KEYS = {
   CATEGORY_CREATE: 'category-create', // 创建分类
   CATEGORY_UPDATE: 'category-update', // 更新分类
   CATEGORY_DELETE: 'category-delete', // 删除分类
+  CATEGOR_UPDATE_SORT_ORDER: 'category-reorder', // 更新分类排序
 
   /**
    * 代码片段
@@ -33,15 +34,19 @@ export const IPC_KEYS = {
   CODE_GET_BY_ID: 'code-get-by-id', // 根据ID获取代码片段
   CODE_CREATE: 'code-create', // 创建代码片段
   CODE_UPDATE: 'code-update', // 更新代码片段
+  CODE_BATCH_UPDATE_CATEGORY: 'code-batch-update-category', // 批量更新代码片段分类
+  CODE_MOVE_TO_UNCATEGORIZED: 'code-move-to-uncategorized', // 移动到未分类
   CODE_DELETE: 'code-delete', // 硬删除代码片段
   CODE_SOFT_DELETE: 'code-soft-delete', // 软删除代码片段
   CODE_RESTORE: 'code-restore', // 恢复代码片段
   CODE_GET_TRASH: 'code-get-trash', // 获取回收站中的代码片段
+  CODE_CLEAR_TRASH: 'code-clear-trash', // 清空回收站
   CODE_GET_FAVORITE: 'code-get-favorite', // 获取收藏中的代码片段
   CODE_TOGGLE_FAVORITE: 'code-toggle-favorite', // 收藏/取消收藏代码片段
   CODE_SEARCH: 'code-search', // 搜索代码片段
   CODE_GET_COUNT: 'code-get-count', // 获取代码片段总数
   CODE_GET_BY_TAG: 'code-get-by-tag', // 根据标签获取代码片段
+  CODE_GET_ALL_TAGS: 'code-get-all-tags', // 获取所有标签
 
   /**
    * 快捷键
@@ -52,6 +57,13 @@ export const IPC_KEYS = {
   SHORTCUT_REGISTER_SEARCHBAR: 'shortcut-register-searchbar', // 注册搜索框快捷键
   SHORTCUT_REGISTER_ACTION: 'shortcut-register-action', // 注册操作快捷键
   SHORTCUT_TRIGGER: 'shortcut-trigger', // 快捷键触发事件
+
+  SHORTCUT_MANAGER_ADD_CATEGORY: 'shortcut-manager-add-category', // 新建分类
+  SHORTCUT_MANAGER_RENAME_CATEGORY: 'shortcut-manager-rename-category', // 重命名分类
+  SHORTCUT_MANAGER_REMOVE_CATEGORY: 'shortcut-manager-remove-category', // 删除分类
+  SHORTCUT_MANAGER_ADD_CODE: 'shortcut-manager-add-code', // 新建代码片段
+  SHORTCUT_MANAGER_REMOVE_CODE: 'shortcut-manager-remove-code', // 删除代码片段
+  SHORTCUT_MANAGER_TOGGLE_FAVORITE: 'shortcut-manager-toggle-favorite', // 收藏/取消收藏代码片段
 
   /**
    * 背景图片

@@ -98,6 +98,14 @@ export interface AppearanceSettings {
 export interface ShortcutSettings {
   // 搜索框快捷键
   searchbarShortcut: string
+
+  // 管理界面快捷键
+  managerAddCategory: string // 默认： 'CmdOrCtral+Shift+N'
+  managerRenameCategory: string // 默认： 'F2'
+  managerRemoveCategory: string // 默认： 'CmdOrCtral+Shift+Delete'
+  managerAddCode: string // 默认： 'CmdOrCtral+N'
+  managerRemoveCode: string // 默认： 'CmdOrCtral+Delete'
+  managerToggleFavorite: string // 默认： 'CmdOrCtral+D'
 }
 
 /**

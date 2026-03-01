@@ -72,7 +72,7 @@ export function initSearchbarShortcut() {
 
       if (!success) {
         console.log(`[Shortcut] 初始化快捷键 "${shortcut}" 失败，已重置为默认`)
-        setStore('shortcut', 'searchbarShortcut', 'Shift+Space')
+        setStore('shortcut', 'searchbarShortcut', 'CmdOrCtrl+Shift+Space')
       }
     }
   } catch (error) {
@@ -103,5 +103,40 @@ export function handleActionShortcutTGriggered(shortcut: string, action: string)
         timestamp: Date.now() // 触发时间戳
       })
     }
+  })
+}
+
+// 初始化管理界面快捷键
+export function initManagerShortcut() {
+  const store = getStore('shortcut')
+
+  // 新建分类
+  registerShortcut(store.managerAddCategory, () => {
+    handleActionShortcutTGriggered(store.managerAddCategory, 'manager:add-category')
+  })
+
+  // 重命名分类
+  registerShortcut(store.managerRenameCategory, () => {
+    handleActionShortcutTGriggered(store.managerRenameCategory, 'manager:rename-category')
+  })
+
+  // 删除分类
+  registerShortcut(store.managerRemoveCategory, () => {
+    handleActionShortcutTGriggered(store.managerRemoveCategory, 'manager:remove-category')
+  })
+
+  // 新建代码片段
+  registerShortcut(store.managerAddCode, () => {
+    handleActionShortcutTGriggered(store.managerAddCode, 'manager:add-code')
+  })
+
+  // 删除代码片段
+  registerShortcut(store.managerRemoveCode, () => {
+    handleActionShortcutTGriggered(store.managerRemoveCode, 'manager:remove-code')
+  })
+
+  // 切换收藏状态
+  registerShortcut(store.managerToggleFavorite, () => {
+    handleActionShortcutTGriggered(store.managerToggleFavorite, 'manager:toggle-favorite')
   })
 }

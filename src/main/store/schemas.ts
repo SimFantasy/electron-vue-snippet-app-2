@@ -100,7 +100,15 @@ export const AppearanceSettingsSchema = z.object({
 // 快捷键设置验证
 export const ShortcutSettingsSchema = z.object({
   // 搜索框快捷键
-  searchbarShortcut: z.string().default('Shift+Space')
+  searchbarShortcut: z.string().default('CmdOrCtrl+Shift+Space'),
+
+  // 管理界快捷键
+  managerAddCategory: z.string().default('CmdOrCtrl+Shift+N'),
+  managerRenameCategory: z.string().default('F2'),
+  managerRemoveCategory: z.string().default('CmdOrCtrl+Shift+Delete'),
+  managerAddCode: z.string().default('CmdOrCtrl+N'),
+  managerRemoveCode: z.string().default('CmdOrCtrl+Delete'),
+  managerToggleFavorite: z.string().default('CmdOrCtrl+D')
 })
 
 // 完整Store Schema

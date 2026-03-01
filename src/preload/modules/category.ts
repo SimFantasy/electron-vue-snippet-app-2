@@ -13,6 +13,9 @@ export const categoryAPI = {
   // 创建分类
   create: (data: CreateCategoryInput) => ipcRenderer.invoke(IPC_KEYS.CATEGORY_CREATE, data),
 
+  // 批量更新分类排序
+  UpdateSortOrder: (sortedIds: number[]) => ipcRenderer.invoke(IPC_KEYS.CATEGOR_UPDATE_SORT_ORDER, sortedIds),
+
   // 更新分类
   update: (id: number, data: UpdateCategoryInput) => ipcRenderer.invoke(IPC_KEYS.CATEGORY_UPDATE, id, data),
 

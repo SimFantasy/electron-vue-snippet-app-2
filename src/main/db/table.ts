@@ -11,6 +11,7 @@ export async function initTables() {
       table.increments('id').primary()
       table.string('name').notNullable().comment('分类名称')
       table.string('key').defaultTo('').unique().comment('分类标识')
+      table.integer('sort_order').defaultTo(0).comment('排序权重，数字越小越靠前')
       table.timestamp('created_at').defaultTo(db.fn.now()).comment('创建时间')
       table.timestamp('updated_at').defaultTo(db.fn.now()).comment('更新时间')
     })
@@ -72,9 +73,7 @@ export async function setupCategoryDeleteTrigger() {
 
   // 检查触发器是否存在
   const triggerName = 'trg_category_delete'
-  const result = await db.raw(`SELECT name FROM sqlite_master WHERE type='trigger' AND name=?`, [
-    triggerName
-  ])
+  const result = await db.raw(`SELECT name FROM sqlite_master WHERE type='trigger' AND name=?`, [triggerName])
 
   if (result.length === 0) {
     await db.raw(`
