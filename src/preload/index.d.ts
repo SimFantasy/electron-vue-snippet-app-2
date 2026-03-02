@@ -170,13 +170,14 @@ export interface StoreAPI {
   // 获取配置项
   get: <K extends keyof AppStore, SK extends keyof AppStore[K]>(key?: K, subKey?: SK) => Promise<any>
 
-  // 设置配置项
-  set: <K extends keyof AppStore, SK extends keyof AppStore[K]>(key: K, subKey: SK, value?: AppStore[K][SK]) => Promise<boolean>
-  // set: <K extends keyof AppStore>(key: K, value: AppStore[K]) => Promise<boolean>
-  // // 单个设置
-  // set: <K extends keyof AppStore, SK extends keyof AppStore[K]>(key: K, subKey: SK, value: AppStore[K][SK]) => Promise<boolean>
-  // // 实现
-  // set: (key: string, subKeyOrValue: unknown, value?: unknown) => Promise<boolean>
+  // 设置配置项 - 单个值
+  set: (<K extends keyof AppStore, SK extends keyof AppStore[K]>(
+    key: K,
+    subKey: SK,
+    value: AppStore[K][SK]
+  ) => Promise<boolean>) &
+    // 批量设置
+    (<K extends keyof AppStore>(key: K, value: Partial<AppStore[K]>) => Promise<boolean>)
 
   // 获取默认配置项
   getDefault: () => Promise<AppStore>

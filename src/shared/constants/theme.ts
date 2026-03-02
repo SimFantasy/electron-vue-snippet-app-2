@@ -4,46 +4,18 @@
  * 用于统一编辑器主题和整个应用的视觉风格
  */
 
-import { ColorMode } from '@shared/types/store'
-
-// 项目配色方案
-export interface ThemeColors {
-  // 主背景色
-  primaryBg: string
-  // 次背景色
-  secondaryBg: string
-  // 主文本颜色
-  primaryText: string
-  // 次文本颜色
-  secondaryText: string
-  // 高亮背景色
-  activeBg: string
-  // 高亮文本颜色
-  activeText: string
-  // 边框颜色
-  border: string
-}
+import { ColorMode, ThemeColors } from '@shared/types'
 
 // CodeMirror主题分组（根据深浅模式分类）
 export const codemirrorThemes = {
   // 浅色主题
   light: ['material-light', 'github-light', 'tomorrow', 'solarized-light'],
   // 深色主题
-  dark: [
-    'material-dark',
-    'github-dark',
-    'tomorrow-night',
-    'solarized-dark',
-    'on-dark',
-    'dracula',
-    'monokai'
-  ]
+  dark: ['material-dark', 'github-dark', 'tomorrow-night', 'solarized-dark', 'on-dark', 'dracula', 'monokai']
 }
 
 // CodeMirror主题类型
-export type CodeMirrorTheme =
-  | (typeof codemirrorThemes)['light'][number]
-  | (typeof codemirrorThemes)['dark'][number]
+export type CodeMirrorTheme = (typeof codemirrorThemes)['light'][number] | (typeof codemirrorThemes)['dark'][number]
 
 /**
  * 主题配色映射表

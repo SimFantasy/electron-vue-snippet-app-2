@@ -128,3 +128,21 @@ export interface DatabaseStatistics {
   // 回收站数量
   trash: number
 }
+
+// 项目配色方案
+export interface ThemeColors {
+  // 主背景色
+  primaryBg: string
+  // 次背景色
+  secondaryBg: string
+  // 主文本颜色
+  primaryText: string
+  // 次文本颜色
+  secondaryText: string
+  // 高亮背景色
+  activeBg: string
+  // 高亮文本颜色
+  activeText: string
+  // 边框颜色
+  border: string
+}

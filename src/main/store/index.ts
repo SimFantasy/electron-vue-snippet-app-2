@@ -10,7 +10,7 @@ import { app } from 'electron'
 import Store from 'electron-store'
 import { z } from 'zod'
 
-import { StoreSchema } from './schemas'
+import { StoreSchema } from '@shared/schemas'
 
 /**
  * Store 默认值
@@ -137,5 +137,5 @@ export function onStoreChange<K extends keyof AppStore>(
   return store.onDidChange(key, callback as (newValue: unknown, oldValue: unknown) => void)
 }
 
-export { StoreSchema } from './schemas'
+export { StoreSchema } from '@shared/schemas'
 export { initStoreWatcher } from './watcher'

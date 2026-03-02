@@ -1,4 +1,4 @@
-import type { Code } from '@shared/types'
+import type { Code, QueryOptions } from '@shared/types'
 
 export const useSearchStore = defineStore('search', () => {
   /**
@@ -8,9 +8,8 @@ export const useSearchStore = defineStore('search', () => {
   const keyword = ref('')
   // 搜索结果
   const results = ref<Code[]>([])
-  // 当前搜索结果的id
+  // 当前搜索结果的索引
   const selectedIndex = ref<number>(0)
-
   // 是否正在搜索
   const isSearching = ref(false)
 
@@ -19,10 +18,8 @@ export const useSearchStore = defineStore('search', () => {
    */
   // 当前选中的代码片段
   const selectedCode = computed(() => results.value[selectedIndex.value])
-
   // 是否有搜索结果
   const hasResults = computed(() => results.value.length > 0)
-
   // 搜索结果总数
   const totalResults = computed(() => results.value.length)
 
@@ -35,8 +32,15 @@ export const useSearchStore = defineStore('search', () => {
     keyword.value = searchKeyword
     isSearching.value = true
     try {
+      // 查询选项
+      const options: QueryOptions = {
+        search: searchKeyword,
+        isDeleted: false,
+        limit: 20
+      }
+
       // 搜索代码片段
-      results.value = await window.api.code.search(searchKeyword)
+      results.value = await window.api.code.getCodes(options)
       // 重复选中索引为第一个
       selectedIndex.value = 0
     } catch (error) {

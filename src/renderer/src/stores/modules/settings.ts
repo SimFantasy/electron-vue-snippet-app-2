@@ -1,12 +1,7 @@
 import type { AppStore } from '@shared/types'
-import { useAsyncState, useColorMode } from '@vueuse/core'
+import { useAsyncState } from '@vueuse/core'
 
 export const useSettingsStore = defineStore('settings', () => {
-  /**
-   * Hooks
-   */
-  const { store } = useColorMode()
-
   /**
    * States
    */
