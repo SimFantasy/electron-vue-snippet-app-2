@@ -19,7 +19,7 @@ export const LanguageSchema = z.enum(['zh-CN', 'zh-TW', 'en-US'])
 export const ThemeModeSchema = z.enum(['system', 'light', 'dark'])
 
 // 编辑器字段验证
-export const EditorFontFamilySchema = z.enum(['Fira Code', 'Source Code Pro', 'JetBrains Mono', 'custom'])
+export const EditorFontFamilySchema = z.string().default('Fira Code')
 
 // 背景设置验证
 export const BackgroundSettingsSchema = z.object({
@@ -38,7 +38,7 @@ export const GeneralSettingsSchema = z.object({
   // 系统启动时不显示搜索框
   hideOnStartup: z.boolean().default(true),
   // 搜索框失去焦点时隐藏
-  autoHideOnBlur: z.boolean().default(true),
+  autoHideOnBlur: z.boolean().default(false),
   // 显示系统托盘图标
   showSystemTray: z.boolean().default(true),
   // 搜索框置顶
@@ -60,9 +60,9 @@ export const StorageSettingsSchema = z.object({
 // 编辑器设置验证
 export const EditorSettingsSchema = z.object({
   // 字体
-  fontFamily: EditorFontFamilySchema.default('Fira Code'),
-  // 自定义字体路径
-  customFontFamilyPath: z.string().default(''),
+  fontFamily: EditorFontFamilySchema,
+  // 是否使用系统字体
+  useSystemFont: z.boolean().default(false),
   // 字号
   fontSize: z.number().min(12).max(24).default(16),
   // 缩进空格数

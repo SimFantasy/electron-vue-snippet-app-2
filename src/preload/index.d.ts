@@ -212,6 +212,13 @@ export interface MouseAPI {
 }
 
 /**
+ * 字体
+ */
+export interface FontAPI {
+  getSystemFonts: () => Promise<string[]>
+}
+
+/**
  * 统一接口
  */
 export interface API {
@@ -223,6 +230,7 @@ export interface API {
   store: StoreAPI
   background: BackgroundAPI
   mouse: MouseAPI
+  font: FontAPI
 }
 
 /**

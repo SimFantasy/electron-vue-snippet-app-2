@@ -4,13 +4,14 @@ import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { initIpc } from './ipc'
 import { initSearchbarWindow } from './windows'
 import { createConnection } from './db/connect'
+import { initTables, setupCategoryDeleteTrigger } from './db/table'
 import { initSearchbarShortcut, unregisterAllShortcuts } from './shortcut'
 import { getStore, initStoreWatcher } from './store'
 import { initTray, destroyTray } from './tray'
 
 import { initLanguage } from '../i18n'
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // 设置应用ID
   electronApp.setAppUserModelId('com.sim-snippet.app')
 
@@ -27,6 +28,10 @@ app.whenReady().then(() => {
 
   // 初始化数据库连接
   createConnection()
+
+  // 初始化数据库表
+  await initTables()
+  await setupCategoryDeleteTrigger()
 
   // 创建托盘
   initTray()

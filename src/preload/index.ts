@@ -9,6 +9,7 @@ import { mouseAPI } from './modules/mouse'
 import { shortcutAPI } from './modules/shortcut'
 import { storeAPI } from './modules/store'
 import { windowAPI } from './modules/window'
+import { fontAPI } from './modules/font'
 
 // Custom APIs for renderer
 const api = {
@@ -19,7 +20,8 @@ const api = {
   shortcut: shortcutAPI,
   store: storeAPI,
   background: backgroundAPI,
-  mouse: mouseAPI
+  mouse: mouseAPI,
+  font: fontAPI
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

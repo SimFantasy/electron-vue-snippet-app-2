@@ -83,5 +83,6 @@ export const IPC_KEYS = {
   /**
    * 其他
    */
-  IGNORE_MOUSE_EVENTS: 'ignore-mouse-events' // 忽略鼠标事件
+  IGNORE_MOUSE_EVENTS: 'ignore-mouse-events', // 忽略鼠标事件
+  FONT_GET_SYSTEM_FONTS: 'font-get-system-fonts' // 获取系统字体
 }

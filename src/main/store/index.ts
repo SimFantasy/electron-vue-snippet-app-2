@@ -19,7 +19,7 @@ export const defaultStore: AppStore = {
   general: {
     autoLaunch: false,
     hideOnStartup: true,
-    autoHideOnBlur: true,
+    autoHideOnBlur: false,
     searchbarAlwaysOnTop: false,
     showSystemTray: true,
     searchbarPosition: 'center',
@@ -31,7 +31,7 @@ export const defaultStore: AppStore = {
   },
   editor: {
     fontFamily: 'Fira Code',
-    customFontFamilyPath: '',
+    useSystemFont: false,
     fontSize: 16,
     tabSize: 2,
     wordWrap: true,

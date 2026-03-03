@@ -6,6 +6,7 @@ import { initCategoryIpc } from './ipc-category'
 import { initCodeIpc } from './ipc-code'
 import { initBackgroundIpc } from './ipc-background'
 import { initIpcMouse } from './ipc-mouse'
+import { initFontIpc } from './ipc-font'
 
 /**
  * 初始化全部IPC通信
@@ -19,4 +20,5 @@ export const initIpc = () => {
   initCodeIpc()
   initBackgroundIpc()
   initIpcMouse()
+  initFontIpc()
 }

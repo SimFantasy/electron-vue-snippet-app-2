@@ -10,7 +10,7 @@ export const options: CustomWindowOptions = {
     id: 0,
     options: {
       initShow: true,
-      openDevTools: false
+      openDevTools: true
     },
     settingsApplied: false
   },

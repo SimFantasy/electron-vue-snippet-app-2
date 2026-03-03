@@ -38,6 +38,16 @@
 
   /* 字体系统 */
   --font-sans: 'Public Sans', sans-serif;
+
+  /* 布局颜色变量 */
+  --layout-bg-primary: #ffffff;
+  --layout-bg-secondary: #f5f5f5;
+  --layout-bg-secondary: #f5f5f5;
+  --layout-text-primary: #1c1917;
+  --layout-text-secondary: #78716c;
+  --layout-active-bg: #e7e5e4;
+  --layout-active-text: #1c1917;
+  --layout-border: #e7e5e4;
 }
 
 /**
@@ -52,6 +62,15 @@
     --color-border: var(--color-zinc-800);
     --color-input: var(--color-zinc-800);
     --color-ring: var(--color-zinc-300);
+
+    --layout-bg-primary: #18181b;
+    --layout-bg-primary-rgb: 24, 24, 27;
+    --layout-bg-secondary: #27272a;
+    --layout-text-primary: #fafafa;
+    --layout-text-secondary: #a1a1aa;
+    --layout-active-bg: #3f3f46;
+    --layout-active-text: #fafafa;
+    --layout-border: #3f3f46;
   }
 }
 
@@ -59,7 +78,7 @@
 * 自定义变量
 */
 @theme {
-  --layout-search-height: calc(var(--spacing) * 14);
+  --searchbar-height: calc(var(--spacing) * 14);
 }
 
 /**
@@ -86,11 +105,11 @@
   }
 
   html {
-    @apply scroll-smooth hover:scroll-auto;
+    @apply h-full scroll-smooth hover:scroll-auto;
   }
 
   body {
-    @apply bg-transparent! text-stone-500 overflow-hidden;
+    @apply h-full bg-transparent! text-stone-500 overflow-hidden;
   }
 }
 

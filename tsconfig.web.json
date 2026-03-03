@@ -24,7 +24,7 @@
         "src/renderer/src/*"
       ],
       "#build/ui/*": [
-        "./node_modules/.nuxt-ui/ui/*"
+        "src/renderer/node_modules/.nuxt-ui/ui/*"
       ],
       "@shared/*": [
         "src/shared/*"

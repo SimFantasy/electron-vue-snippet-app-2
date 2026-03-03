@@ -13,8 +13,8 @@ export type AppLanguage = 'zh-CN' | 'zh-TW' | 'en-US'
 // 主题颜色模式
 export type ColorMode = 'system' | 'light' | 'dark'
 
-// 编辑器字体
-export type EditorFontFamily = 'Fira Code' | 'Source Code Pro' | 'JetBrains Mono' | 'custom'
+// 编辑器字体： 'Fira Code' | 'Source Code Pro' | 'JetBrains Mono' | 'custom'
+export type EditorFontFamily = string
 
 /**
  * 通用设置
@@ -52,8 +52,8 @@ export interface StorageSettings {
 export interface EditorSettings {
   // 编辑器字体
   fontFamily: EditorFontFamily
-  // 自定义编辑器字体文件路径（仅在 fontFamily 为 custom 时生效）
-  customFontFamilyPath: string
+  // 是否使用系统字体: true: 从系统字体选择， false: 使用预设字体
+  useSystemFont: boolean
   // 字号
   fontSize: number
   // 缩进空格数

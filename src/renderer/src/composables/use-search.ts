@@ -8,6 +8,10 @@ export function useSearch() {
   const searchStore = useSearchStore()
 
   /**
+   * States
+   */
+
+  /**
    * Getters
    */
   // 搜索关键字
@@ -71,6 +75,27 @@ export function useSearch() {
     }
   }
 
+  // 鼠标穿透控制
+  const updateMouseThrough = <T extends HTMLElement>(el: ShallowRef<T>) => {
+    // 如果没有鼠标穿透容器，则不处理
+    if (!el.value) return
+
+    // 在容器上时，不可穿透
+    el.value.addEventListener('mouseover', () => {
+      window.api.mouse.ignoreMouseEvents(false)
+    })
+
+    // 离开容器，可以穿透
+    document.body.addEventListener('mouseover', (e: MouseEvent) => {
+      if (e.target === document.body) {
+        window.api.mouse.ignoreMouseEvents(true, { forward: true })
+      }
+    })
+
+    // 初始化时， 穿透
+    window.api.mouse.ignoreMouseEvents(true, { forward: true })
+  }
+
   return {
     // Getters
     keyword,
@@ -88,6 +113,7 @@ export function useSearch() {
     confirmSelection: searchStore.confirmSelection,
     clearSearch: searchStore.clearSearch,
     openManagePage: searchStore.openManagePage,
-    selectedByIndex: searchStore.selectByIndex
+    selectedByIndex: searchStore.selectByIndex,
+    updateMouseThrough
   }
 }

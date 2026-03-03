@@ -34,7 +34,9 @@ export default defineConfig({
         '@': resolve('src/renderer/src'),
         '@renderer': resolve('src/renderer/src'),
         '@shared': resolve('src/shared'),
-        '@i18n': resolve('src/i18n')
+        '@i18n': resolve('src/i18n'),
+        '#build/ui': resolve('src/renderer/node_modules/.nuxt-ui/ui'),
+        '#build/ui.css': resolve('src/renderer/node_modules/.nuxt-ui/ui.css')
       }
     },
     plugins: [
