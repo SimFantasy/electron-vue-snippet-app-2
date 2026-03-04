@@ -6,6 +6,8 @@ import ui from '@nuxt/ui/vue-plugin'
 import { router, setupRouter } from '@/router'
 import { setupStore } from '@/stores'
 
+import { i18n } from '@i18n/renderer'
+
 import App from './App.vue'
 
 async function bootstrap() {
@@ -13,6 +15,9 @@ async function bootstrap() {
 
   // 加载NuxtUI
   app.use(ui)
+
+  // 加载i18n
+  app.use(i18n)
 
   // 加载Store
   setupStore(app)

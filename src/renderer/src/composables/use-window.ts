@@ -1,14 +1,10 @@
 import { WindowType } from '@shared/types'
 
-export function useWindow() {
-  /**
-   * States
-   */
-  // 是否最大化
-  const isMaximized = ref(false)
-  // 是否置顶
-  const isAlwaysOnTop = ref(false)
+// 全局共享状态
+const isMaximized = ref(false)
+const isAlwaysOnTop = ref(false)
 
+export function useWindow() {
   /**
    * Actions
    */
@@ -21,8 +17,10 @@ export function useWindow() {
   const toggleMaximizeWindow = () => {
     if (isMaximized.value) {
       window.api.window.restore()
+      isMaximized.value = false
     } else {
       window.api.window.maximize()
+      isMaximized.value = true
     }
   }
 

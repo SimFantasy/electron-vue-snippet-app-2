@@ -10,7 +10,6 @@ const { updateMouseThrough } = useSearch()
 /**
  * States
  */
-// 设置鼠标穿透容器
 const mouseThroughContainer = useTemplateRef<HTMLElement>('mouseThroughContainer')
 
 /**
@@ -25,7 +24,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="mouseThroughContainer" class="w-full h-fit drag">
+  <div ref="mouseThroughContainer" class="p-1.5 w-full h-fit rounded-lg drop-shadow-lg drag">
     <SearchbarMain />
 
     <SearchbarResult />

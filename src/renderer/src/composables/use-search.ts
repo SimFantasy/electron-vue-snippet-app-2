@@ -8,10 +8,6 @@ export function useSearch() {
   const searchStore = useSearchStore()
 
   /**
-   * States
-   */
-
-  /**
    * Getters
    */
   // 搜索关键字

@@ -8,7 +8,7 @@ const allLanguageModules = import.meta.glob('./lang/**/*.ts', { eager: true })
 export function buildLanguageMessages() {
   const messages: Record<string, Record<string, any>> = {}
 
-  Object.entries(allLanguageModules).forEach(([path, moudle]) => {
+  Object.entries(allLanguageModules).forEach(([path, module]) => {
     // 解析路径, './lang/zh-CN/common.ts' -> { lang: 'zh-CN', module: 'common' }
     const match = path.match(/\.\/lang\/([^/]+)\/([^/]+)\.ts$/)
 
@@ -16,7 +16,7 @@ export function buildLanguageMessages() {
       const [, langCode, moduleName] = match
 
       // 跳过index 文件
-      if (moduleName === 'index') {
+      if (moduleName !== 'index') {
         if (!messages[langCode]) {
           messages[langCode] = {}
         }

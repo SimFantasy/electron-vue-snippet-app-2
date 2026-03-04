@@ -82,6 +82,9 @@ export const useSearchStore = defineStore('search', () => {
 
       // 复制成功后隐藏搜索框
       window.api.window.close('searchbar')
+
+      // 清空搜索结果
+      clearSearch()
     } catch (error) {
       console.log('[Store] 复制失败', error)
     }

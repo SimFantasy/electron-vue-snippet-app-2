@@ -1,7 +1,13 @@
 <script lang="ts" setup name="ManagerSidebar"></script>
 
 <template>
-  <div class="space-y-4">ManagerSidebar Component</div>
+  <div class="col-span-4 manager-panel flex-y-1">
+    <QuickNavs />
+
+    <CategoryNavs />
+
+    <TagNavs />
+  </div>
 </template>
 
 <style scoped>

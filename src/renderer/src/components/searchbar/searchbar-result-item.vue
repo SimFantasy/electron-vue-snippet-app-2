@@ -28,10 +28,12 @@ const handleClick = (index: number) => {
 <template>
   <div
     :class="
-      cn('flex-x-2 px-2 py-1.5 rounded-md text-sm text-stone-500 truncate cursor-pointer trans-colors ', {
-        'bg-(--layout-active-bg) text-(--layout-active-text)': isSelected,
-        'hover:bg-(--layout-bg-secondary)': !isSelected
-      })
+      cn(
+        'flex-x-2 px-2 py-1.5 rounded-md text-sm text-stone-500 truncate cursor-pointer trans-colors hover:bg-(--layout-bg-primary)',
+        {
+          'bg-(--layout-active-bg) text-(--layout-active-text)': isSelected
+        }
+      )
     "
     @click="handleClick(index)"
   >

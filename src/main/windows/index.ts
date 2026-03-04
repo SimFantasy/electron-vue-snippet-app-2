@@ -10,7 +10,7 @@ export const options: CustomWindowOptions = {
     id: 0,
     options: {
       initShow: true,
-      openDevTools: true
+      openDevTools: false
     },
     settingsApplied: false
   },
@@ -18,10 +18,10 @@ export const options: CustomWindowOptions = {
     id: 0,
     options: {
       initShow: false,
-      openDevTools: false,
+      openDevTools: true,
       width: 1356,
-      height: 960,
-      hash: '/#/manage/codes'
+      height: 880,
+      hash: '/#/manager'
     }
   }
 }

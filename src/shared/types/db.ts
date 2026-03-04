@@ -74,4 +74,5 @@ export interface QueryOptions {
   offset?: number
   isDeleted?: boolean // 是否包含已删除的记录
   isFavorited?: boolean // 是否只显示收藏的记录
+  tags?: string // 按标签筛选
 }

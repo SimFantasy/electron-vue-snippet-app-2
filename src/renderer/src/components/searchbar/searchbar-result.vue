@@ -1,10 +1,12 @@
 <script lang="ts" setup name="SearchbarResult">
 import { useSearch } from '@/composables'
+import { useI18n } from 'vue-i18n'
 
 /**
  * Hooks
  */
 const { results, selectedIndex, hasResults, selectedByIndex, confirmSelection } = useSearch()
+const { t } = useI18n()
 
 /**
  * Actions
@@ -17,27 +19,26 @@ const handleItemClick = (index: number) => {
 </script>
 
 <template>
-  <div v-if="hasResults" class="p-2 w-full h-[calc(100vh-var(--searchbar-height))] overflow-y-auto bg-(--layout-bg-secondary)">
-    <!-- 结果列表 -->
-    <div v-if="hasResults">
-      <SearchbarResultItem
-        v-for="(code, index) in results"
-        :key="code.id"
-        :code="code"
-        :index="index"
-        :is-selected="selectedIndex === index"
-        @click="handleItemClick"
-      />
-    </div>
+  <div class="w-full h-[calc(100vh-var(--searchbar-height))] overflow-hidden">
+    <div class="w-full h-full overflow-y-auto">
+      <div v-if="hasResults" class="p-2 h-fit bg-(--layout-bg-secondary) rounded-b-lg nodrag">
+        <!-- 结果列表 -->
+        <div v-if="hasResults">
+          <SearchbarResultItem
+            v-for="(code, index) in results"
+            :key="code.id"
+            :code="code"
+            :index="index"
+            :is-selected="selectedIndex === index"
+            @click="handleItemClick"
+          />
+        </div>
 
-    <!-- 无结果 -->
-    <div v-else class="flex-center py-4 text-sm text-(--layout-secondary-text)">
-      <span>没有找到匹配的结果</span>
-    </div>
-
-    <!-- 快捷键提示 -->
-    <div class="text-center text-xs text-(--layout-secondary-text)">
-      <span>↑↓: 选择结果, Enter: 复制结果, ESC: 隐藏搜索框</span>
+        <!-- 快捷键提示 -->
+        <div class="text-center text-xs text-(--layout-secondary-text)">
+          <span>{{ t('searchbar.result.shortcutHint') }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>

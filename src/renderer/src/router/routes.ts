@@ -8,8 +8,8 @@ export const routes = [
     meta: { title: '搜索' }
   },
   {
-    path: '/manage',
-    name: 'Manage',
+    path: '/manager',
+    name: 'Manager',
     component: () => import('@/views/manage.vue'),
     meta: { title: '代码片段管理' }
   }

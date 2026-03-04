@@ -1,7 +1,7 @@
 <script lang="ts" setup name="ManagerList"></script>
 
 <template>
-  <div class="space-y-4">ManagerList Component</div>
+  <div class="col-span-5 manager-panel">ManagerList Component</div>
 </template>
 
 <style scoped>

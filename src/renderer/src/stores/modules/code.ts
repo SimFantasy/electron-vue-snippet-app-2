@@ -25,7 +25,8 @@ export const useCodeStore = defineStore('code', () => {
   const filter = ref({
     categoryId: undefined as number | undefined,
     isDeleted: false,
-    isFavorited: undefined as boolean | undefined
+    isFavorited: undefined as boolean | undefined,
+    tag: undefined as string | undefined
   })
 
   /**
@@ -61,6 +62,18 @@ export const useCodeStore = defineStore('code', () => {
         codes.value = []
         pagination.value.page = 1
         pagination.value.hasMore = true
+      }
+
+      // 如果有标签筛选条件，使用专门的标签查询API
+      if (filter.value.tag) {
+        // 根据标签获取代码片段列表
+        const result = await window.api.code.getCodesByTag(filter.value.tag)
+
+        // 标签查询结果直接赋值
+        codes.value = result
+        pagination.value.hasMore = false
+        isLoading.value = false
+        return
       }
 
       // 查询参数
@@ -212,6 +225,17 @@ export const useCodeStore = defineStore('code', () => {
     loadCodes({}, true)
   }
 
+  // 清空分类筛选
+  const clearCategoryFilter = () => {
+    filter.value.categoryId = undefined
+    filter.value.isFavorited = undefined
+  }
+
+  // 清空标签筛选
+  const clearTagFilter = () => {
+    filter.value.tag = undefined
+  }
+
   return {
     // States
     codes,
@@ -237,6 +261,8 @@ export const useCodeStore = defineStore('code', () => {
     toggleFavorite,
     batchUpdateCategory,
     setCurrentCode,
-    setFilter
+    setFilter,
+    clearCategoryFilter,
+    clearTagFilter
   }
 })

@@ -126,8 +126,14 @@
   input,
   select,
   textarea,
+  button,
   option {
     -webkit-app-region: no-drag;
+  }
+
+  /* Manager */
+  .manager-panel {
+    @apply h-full border border-(--layout-border) bg-(--layout-bg-primary) rounded-md;
   }
 }
 

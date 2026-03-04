@@ -25,10 +25,8 @@ export function useCategory() {
   // 当前正在更新的分类
   const updatingCategory = ref<Category | null>(null)
 
-  // 创建分类弹窗状态
-  const isCreateCategoryVisible = ref(false)
-  // 更新分类弹窗状态
-  const isUpdateCategoryVisible = ref(false)
+  // 分类弹窗状态
+  const isCategoryDialogVisible = ref(false)
 
   /**
    * Getters
@@ -89,20 +87,6 @@ export function useCategory() {
         handleReorder()
       }
     })
-    // useSortable(sortableCointainerRef, categories, {
-    //   onStart: () => {
-    //     // 开始拖拽排序
-    //     isSorting.value = true
-    //   },
-    //   onEnd: (evt) => {
-    //     // 结束拖拽排序
-    //     isSorting.value = false
-    //     // 只有顺序发生变化才重新加载分类列表
-    //     if (evt.oldIndex !== evt.newIndex) {
-    //       handleReorder()
-    //     }
-    //   }
-    // })
   }
 
   // 选择分类并更新代码列表
@@ -110,34 +94,45 @@ export function useCategory() {
     // 更新分类ID
     categoryStore.setCurrentCategory(id)
 
-    // 根据分类ID设置对应的筛选条件: -1 收藏夹 -2 回收站 0 未分类
-    if (id === -1) {
-      codeStore.setFilter({ isFavorited: true, isDeleted: false })
+    // 根据分类ID设置对应的筛选条件: 全部代码片段-99 -1 收藏夹 -2 回收站 0 未分类
+    if (id === -99) {
+      codeStore.setFilter({ isDeleted: false, isFavorited: undefined, tag: undefined })
+    } else if (id === -1) {
+      codeStore.setFilter({ isFavorited: true, isDeleted: false, tag: undefined })
     } else if (id === -2) {
-      codeStore.setFilter({ isDeleted: true })
+      codeStore.setFilter({ isDeleted: true, tag: undefined })
     } else {
       codeStore.setFilter({
         categoryId: id === 0 ? undefined : id,
         isDeleted: false,
-        isFavorited: undefined
+        isFavorited: undefined,
+        tag: undefined
       })
     }
   }
 
   //  打开创建分类弹窗
-  const openCreateDialog = () => {
-    // 重置表单
-    categoryForm.value = { name: '', key: '' }
+  const openCategoryDialog = (type: 'create' | 'update', category?: Category) => {
+    if (type === 'create') {
+      // 重置表单
+      categoryForm.value = { name: '', key: '' }
+    } else if (type === 'update' && category) {
+      updatingCategory.value = category
+    }
     // 打开弹窗
-    isCreateCategoryVisible.value = true
+    isCategoryDialogVisible.value = true
   }
 
   //  关闭创建分类弹窗
-  const closeCreateDialog = () => {
-    // 重置表单
-    categoryForm.value = { name: '', key: '' }
+  const closeCategoryDialog = (type: 'create' | 'update') => {
+    if (type === 'create') {
+      // 重置表单
+      categoryForm.value = { name: '', key: '' }
+    } else if (type === 'update') {
+      updatingCategory.value = null
+    }
     // 关闭弹窗
-    isCreateCategoryVisible.value = false
+    isCategoryDialogVisible.value = false
   }
 
   // 提交创建分类表单
@@ -162,7 +157,7 @@ export function useCategory() {
 
       if (id) {
         // 关闭弹窗
-        closeCreateDialog()
+        closeCategoryDialog('create')
         // 选择分类
         selectCategory(id)
         // 提示创建成功
@@ -180,18 +175,6 @@ export function useCategory() {
 
       throw error
     }
-  }
-
-  // 打开更新分类弹窗
-  const openUpdateDialog = (category: Category) => {
-    updatingCategory.value = category
-    isUpdateCategoryVisible.value = true
-  }
-
-  // 关闭更新分类弹窗
-  const closeUpdateDialog = () => {
-    updatingCategory.value = null
-    isUpdateCategoryVisible.value = false
   }
 
   // 提交更新分类表单
@@ -225,7 +208,7 @@ export function useCategory() {
 
       if (id) {
         // 关闭弹窗
-        closeUpdateDialog()
+        closeCategoryDialog('update')
         // 提示
         toast.add({
           title: '更新分类成功',
@@ -283,8 +266,7 @@ export function useCategory() {
   return {
     // States
     categoryForm,
-    isCreateCategoryVisible,
-    isUpdateCategoryVisible,
+    isCategoryDialogVisible,
     updatingCategory,
 
     // Getters
@@ -297,11 +279,9 @@ export function useCategory() {
     generateKey,
     initSortable,
     selectCategory,
-    openCreateDialog,
-    closeCreateDialog,
+    openCategoryDialog,
+    closeCategoryDialog,
     onCreateCategorySubmit,
-    openUpdateDialog,
-    closeUpdateDialog,
     onUpdateCategorySubmit,
     removeCategory
   }

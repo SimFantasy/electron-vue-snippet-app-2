@@ -1,7 +1,21 @@
-<script lang="ts" setup name="TagNavItem"></script>
+<script lang="ts" setup name="TagNavItem">
+/**
+ * Defines
+ */
+// Props
+defineProps<{
+  tag: string
+  isActive: boolean
+}>()
+
+// Emits
+const emit = defineEmits<{
+  onSelect: [tag: string]
+}>()
+</script>
 
 <template>
-  <div class="space-y-4">TagNavItem Component</div>
+  <UBadge :label="tag" :variant="isActive ? 'subtle' : 'outline'" :color="isActive ? 'primary' : 'neutral'" />
 </template>
 
 <style scoped>

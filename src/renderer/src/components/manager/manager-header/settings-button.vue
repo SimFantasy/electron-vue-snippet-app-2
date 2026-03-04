@@ -1,7 +1,7 @@
 <script lang="ts" setup name="SettingsButton"></script>
 
 <template>
-  <div class="space-y-4">SettingsButton Component</div>
+  <UButton icon="tabler:settings-2" variant="ghost" :ui="{ base: 'text-(--layout-text-secondary)' }" />
 </template>
 
 <style scoped>
