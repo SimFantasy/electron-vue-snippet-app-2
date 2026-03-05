@@ -2,8 +2,8 @@ import type { Category } from '@shared/types'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { CategoryFormType } from '@/schemas'
 
-import { useSortable } from '@vueuse/integrations/useSortable'
 import { useCategoryStore, useCodeStore } from '@/stores'
+import { useTag } from './use-tag'
 
 export function useCategory() {
   /**
@@ -11,15 +11,14 @@ export function useCategory() {
    */
   const categoryStore = useCategoryStore()
   const codeStore = useCodeStore()
+
   const toast = useToast()
+  const { clearTag } = useTag()
 
   /**
    * States
    */
-  // 拖拽排序的容器元素引用
-  const sortableCointainerRef = useTemplateRef<HTMLElement | null>('sortableCointainer')
-  // 是否正在拖拽排序
-  const isSorting = ref(false)
+
   // 分类表单
   const categoryForm = ref({ name: '', key: '' })
   // 当前正在更新的分类
@@ -54,45 +53,30 @@ export function useCategory() {
   }
 
   // 处理排序后的新顺序保存
-  const handleReorder = async () => {
+  const handleReorder = async (newOrder: Category[]) => {
+    console.log(
+      '[Hooks] 开始保存排序:',
+      newOrder.map((c) => c.id)
+    )
     try {
-      // 提取当前分类列表的顺序ID
-      const sortedIds = categories.value.map((c) => c.id)
+      const sortedIds = newOrder.map((c) => c.id)
+      console.log('[Hooks] 发送 ID 列表:', sortedIds)
 
-      // 保存到后端
       await categoryStore.reorderCategories(sortedIds)
+      console.log('[Hooks] 排序保存成功')
     } catch (error) {
       console.log('[Hooks] 排序保存失败:', error)
-      // 重新加载分类列表，恢复原始顺序
       await categoryStore.loadCategories()
     }
-  }
-
-  // 初始化排序
-  const initSortable = () => {
-    // 检查元素是否存在，不存在直接返回
-    if (!sortableCointainerRef.value) return
-
-    // 使用useSortable初始化拖拽排序
-    const { option } = useSortable(sortableCointainerRef, categories)
-    option('animation', 150)
-    option('handle', '.sortable-handle')
-    option('ghostClass', 'sortable-ghost')
-    option('onStart', () => (isSorting.value = true))
-    option('onEnd', (evt) => {
-      // 结束拖拽排序
-      isSorting.value = false
-      // 只有顺序发生变化才重新加载分类列表
-      if (evt.oldIndex !== evt.newIndex) {
-        handleReorder()
-      }
-    })
   }
 
   // 选择分类并更新代码列表
   const selectCategory = async (id: number) => {
     // 更新分类ID
     categoryStore.setCurrentCategory(id)
+
+    // 清除标签选中
+    clearTag()
 
     // 根据分类ID设置对应的筛选条件: 全部代码片段-99 -1 收藏夹 -2 回收站 0 未分类
     if (id === -99) {
@@ -277,7 +261,7 @@ export function useCategory() {
 
     // Actions
     generateKey,
-    initSortable,
+    handleReorder,
     selectCategory,
     openCategoryDialog,
     closeCategoryDialog,

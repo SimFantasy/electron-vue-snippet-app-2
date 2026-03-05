@@ -18,7 +18,7 @@ export const useTagStore = defineStore('tag', () => {
    */
   // 加载所有标签
   const { isLoading, execute: loadTags } = useAsyncState(() => window.api.code.getTags(), [], {
-    immediate: false,
+    immediate: true,
     onSuccess: (res) => {
       if (res) {
         tags.value = res

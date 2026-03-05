@@ -13,10 +13,15 @@ const { category } = defineProps<{
   isActive: boolean
 }>()
 
+// Emits
+const emit = defineEmits<{
+  onSelect: [id: number]
+}>()
+
 /**
  * Hooks
  */
-const { selectCategory, openCategoryDialog, removeCategory } = useCategory()
+const { openCategoryDialog, removeCategory } = useCategory()
 const { selectCode, createCode } = useCode()
 
 /**
@@ -58,13 +63,13 @@ const contextMenuItems = ref<ContextMenuItem[]>([
  * Actions
  */
 const handleSelected = () => {
-  selectCategory(category.id)
+  emit('onSelect', category.id)
 }
 </script>
 
 <template>
   <UContextMenu :items="contextMenuItems">
-    <NavItem :label="category.name" icon="tabler:folder" :is-active="isActive" @on-selected="handleSelected" />
+    <NavItem :label="category.name" icon="tabler:folder" :is-active="isActive" is-drag @on-selected="handleSelected" />
   </UContextMenu>
 </template>
 

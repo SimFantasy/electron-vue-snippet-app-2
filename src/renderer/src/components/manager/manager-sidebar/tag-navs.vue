@@ -4,18 +4,18 @@ import { useTag } from '@/composables'
 /**
  * Hooks
  */
-const { tags, currentTag } = useTag()
+const { tags, currentTag, selectTag } = useTag()
 </script>
 
 <template>
-  <div class="flex-1 flex-y-1 p-2">
+  <div class="flex-y-1 h-40 overflow-hidden">
     <!-- Tag Navigation Topbar -->
-    <div class="flex-start">
+    <div class="flex-start p-2 pb-0">
       <span class="text-xs text-(--layout-text-secondary)">标签</span>
     </div>
     <!-- Tag Navigation List -->
-    <div class="flex-y-2">
-      <TagNavItem v-for="tag in tags" :key="tag" :tag="tag" :is-active="tag === currentTag" />
+    <div class="flex gap-2 flex-wrap p-2 pt-0 size-full overflow-y-auto">
+      <TagNavItem v-for="tag in tags" :key="tag" :tag="tag" :is-active="tag === currentTag" @on-select="selectTag" />
     </div>
   </div>
 </template>

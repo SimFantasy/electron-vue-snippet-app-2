@@ -7,6 +7,9 @@ export const useCodeStore = defineStore('code', () => {
   // 代码片段列表
   const codes = ref<Code[]>([])
 
+  // 全部代码总数（不随筛选变化）
+  const allCodesCount = ref(0)
+
   // 当前选中的代码片段ID
   const currentCodeId = ref<number | null>(null)
 
@@ -96,6 +99,11 @@ export const useCodeStore = defineStore('code', () => {
         codes.value.push(...result)
       }
 
+      // 更新全部代码片段总数
+      if (reset && !filter.value.tag && !filter.value.isDeleted && !filter.value.isFavorited && !filter.value.categoryId) {
+        allCodesCount.value = result.length
+      }
+
       // 判断是否还有更多
       pagination.value.hasMore = result.length === pagination.value.pageSize
 
@@ -107,6 +115,19 @@ export const useCodeStore = defineStore('code', () => {
       console.log('[Store] 获取代码片段列表数据失败:', error)
     } finally {
       isLoading.value = false
+    }
+  }
+
+  // 获取全部代码片段总数
+  const getAllCodesCount = async () => {
+    try {
+      const result = await window.api.code.getCodes({
+        isDeleted: false,
+        limit: 10000 //获取最多的数据
+      })
+      allCodesCount.value = result.length
+    } catch (error) {
+      console.log('[Store] 获取全部代码片段数量失败:', error)
     }
   }
 
@@ -239,6 +260,7 @@ export const useCodeStore = defineStore('code', () => {
   return {
     // States
     codes,
+    allCodesCount,
     currentCodeId,
     pagination,
     isLoading,
@@ -253,6 +275,7 @@ export const useCodeStore = defineStore('code', () => {
     // Actions
     loadCodes,
     loadMoreCodes,
+    getAllCodesCount,
     createCode,
     updateCode,
     removeCode,

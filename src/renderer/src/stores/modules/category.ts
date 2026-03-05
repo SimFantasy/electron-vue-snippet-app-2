@@ -25,7 +25,7 @@ export const useCategoryStore = defineStore('category', () => {
 
   // 加载分类
   const { isLoading, execute: loadCategories } = useAsyncState(() => window.api.category.getCategories(), [], {
-    immediate: false,
+    immediate: true,
     onSuccess: (res) => {
       if (res) {
         categories.value = res
@@ -73,7 +73,9 @@ export const useCategoryStore = defineStore('category', () => {
   // 重新排序分类
   const reorderCategories = async (sortedIds: number[]): Promise<void> => {
     // 重新排序分类
+    console.log('[Store] 调用 API 更新排序:', sortedIds)
     await window.api.category.updateSortOrder(sortedIds)
+    console.log('[Store] API 调用成功')
     // 重新加载分类
     await loadCategories()
   }

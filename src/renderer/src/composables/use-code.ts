@@ -29,6 +29,8 @@ export function useCode() {
    */
   // 代码片段列表
   const codes = computed(() => codeStore.codes)
+  // 全部代码片段数量
+  const allCodesCount = computed(() => codeStore.allCodesCount)
   // 当前选中的代码片段ID
   const currentCodeId = computed(() => codeStore.currentCodeId)
   // 当前选中的代码片段
@@ -69,6 +71,11 @@ export function useCode() {
         distance: 50
       }
     )
+  }
+
+  // 获取所有代码片段数量
+  const getAllCodesCount = async () => {
+    await codeStore.getAllCodesCount()
   }
 
   // 加载代码片段列表
@@ -335,6 +342,7 @@ export function useCode() {
 
     // Getters
     codes,
+    allCodesCount,
     currentCodeId,
     currentCode,
     pagination,
@@ -347,6 +355,7 @@ export function useCode() {
     // Actions
     loadMore,
     initInfiniteScroll,
+    getAllCodesCount,
     loadCodes,
     searchCodes,
     clearSearch,

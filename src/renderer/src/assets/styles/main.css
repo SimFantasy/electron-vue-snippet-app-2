@@ -135,6 +135,15 @@
   .manager-panel {
     @apply h-full border border-(--layout-border) bg-(--layout-bg-primary) rounded-md;
   }
+
+  /* 拖拽 */
+  .sortable-ghost {
+    @apply bg-(--layout-active-bg) border border-(--layout-border) opacity-40;
+  }
+
+  .sortable-drag {
+    @apply bg-(--layout-bg-secondary) shadow-lg opacity-60;
+  }
 }
 
 /* Common utility styles */
