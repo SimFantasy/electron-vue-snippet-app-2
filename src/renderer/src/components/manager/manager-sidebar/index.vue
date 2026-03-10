@@ -4,14 +4,14 @@ import { useCode } from '@/composables'
 /**
  * Hooks
  */
-const { getAllCodesCount } = useCode()
+const { loadAllCodes } = useCode()
 
 /**
  * Lifecycles
  */
 onMounted(() => {
-  // 获取全部代码片段数量
-  getAllCodesCount()
+  // 加载全部代码片段用于统计
+  loadAllCodes()
 })
 </script>
 

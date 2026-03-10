@@ -8,20 +8,10 @@ export function useSearch() {
   const searchStore = useSearchStore()
 
   /**
-   * Getters
+   * States
    */
-  // 搜索关键字
-  const keyword = computed(() => searchStore.keyword)
-  // 搜索结果
-  const results = computed(() => searchStore.results)
-  // 当前搜索结果的索引
-  const selectedIndex = computed(() => searchStore.selectedIndex)
-  // 是否正在搜索
-  const isSearching = computed(() => searchStore.isSearching)
-  // 当前选中的代码片段
-  const selectedCode = computed(() => searchStore.selectedCode)
-  // 是否有搜索结果
-  const hasResults = computed(() => searchStore.hasResults)
+  // 解构searchStore中的状态
+  const { keyword, isSearching, selectedIndex, selectedCode, results, hasResults } = storeToRefs(searchStore)
 
   /**
    * Actions

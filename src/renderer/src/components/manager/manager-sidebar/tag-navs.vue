@@ -4,7 +4,7 @@ import { useTag } from '@/composables'
 /**
  * Hooks
  */
-const { tags, currentTag, selectTag } = useTag()
+const { sortTags, currentTag, selectTag } = useTag()
 </script>
 
 <template>
@@ -15,7 +15,7 @@ const { tags, currentTag, selectTag } = useTag()
     </div>
     <!-- Tag Navigation List -->
     <div class="flex gap-2 flex-wrap p-2 pt-0 size-full overflow-y-auto">
-      <TagNavItem v-for="tag in tags" :key="tag" :tag="tag" :is-active="tag === currentTag" @on-select="selectTag" />
+      <TagNavItem v-for="tag in sortTags" :key="tag" :tag="tag" :is-active="tag === currentTag" @on-select="selectTag" />
     </div>
   </div>
 </template>

@@ -1,7 +1,6 @@
 <script lang="ts" setup name="CategoryNavs">
 import { VueDraggable } from 'vue-draggable-plus'
 import { useCategory, useTag } from '@/composables'
-import { useCategoryStore } from '@/stores'
 
 /**
  * Hooks
@@ -19,8 +18,6 @@ const {
 
   handleReorder
 } = useCategory()
-
-const categoryStore = useCategoryStore()
 
 const { clearTag } = useTag()
 
@@ -73,7 +70,7 @@ const handleDragEnd = () => {
 
         <div v-else class="flex-y-1 pt-2 px-2 w-full">
           <VueDraggable
-            v-model="categoryStore.categories"
+            v-model="categories"
             :animation="150"
             ghost-class="drag-ghost"
             chosen-class="drag-chosen"

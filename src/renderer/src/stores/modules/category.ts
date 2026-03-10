@@ -7,8 +7,8 @@ export const useCategoryStore = defineStore('category', () => {
    */
   // 所有分类
   const categories = ref<Category[]>([])
-  // 当前选中分类ID
-  const currentCategoryId = ref<number>(0)
+  // 当前选中分类ID（默认为 -99，表示显示全部代码片段）
+  const currentCategoryId = ref<number>(-99)
 
   /**
    * Getters
@@ -73,9 +73,7 @@ export const useCategoryStore = defineStore('category', () => {
   // 重新排序分类
   const reorderCategories = async (sortedIds: number[]): Promise<void> => {
     // 重新排序分类
-    console.log('[Store] 调用 API 更新排序:', sortedIds)
     await window.api.category.updateSortOrder(sortedIds)
-    console.log('[Store] API 调用成功')
     // 重新加载分类
     await loadCategories()
   }

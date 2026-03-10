@@ -18,6 +18,8 @@ export function useCategory() {
   /**
    * States
    */
+  // 结构categoryStore中的状态
+  const { categories, currentCategoryId, currentCategory, isLoading } = storeToRefs(categoryStore)
 
   // 分类表单
   const categoryForm = ref({ name: '', key: '' })
@@ -26,18 +28,6 @@ export function useCategory() {
 
   // 分类弹窗状态
   const isCategoryDialogVisible = ref(false)
-
-  /**
-   * Getters
-   */
-  // 所有分类
-  const categories = computed(() => categoryStore.categories)
-  // 当前选中的分类ID
-  const currentCategoryId = computed(() => categoryStore.currentCategoryId)
-  // 当前选中的分类
-  const currentCategory = computed(() => categoryStore.currentCategory)
-  // 是否正在加载
-  const isLoading = computed(() => categoryStore.isLoading)
 
   /**
    * Actions
@@ -80,18 +70,24 @@ export function useCategory() {
 
     // 根据分类ID设置对应的筛选条件: 全部代码片段-99 -1 收藏夹 -2 回收站 0 未分类
     if (id === -99) {
-      codeStore.setFilter({ isDeleted: false, isFavorited: undefined, tag: undefined })
+      // 全部代码片段
+      codeStore.setFilter({ categoryId: undefined, isDeleted: false, isFavorited: undefined, tag: undefined })
     } else if (id === -1) {
-      codeStore.setFilter({ isFavorited: true, isDeleted: false, tag: undefined })
+      // 收藏夹
+      codeStore.setFilter({ categoryId: undefined, isFavorited: true, isDeleted: false, tag: undefined })
     } else if (id === -2) {
-      codeStore.setFilter({ isDeleted: true, tag: undefined })
-    } else {
+      // 回收站
+      codeStore.setFilter({ categoryId: undefined, isDeleted: true, isFavorited: undefined, tag: undefined })
+    } else if (id === 0) {
+      // 未分类
       codeStore.setFilter({
-        categoryId: id === 0 ? undefined : id,
+        categoryId: 0,
         isDeleted: false,
         isFavorited: undefined,
         tag: undefined
       })
+    } else {
+      codeStore.setFilter({ categoryId: id, isDeleted: false, isFavorited: undefined, tag: undefined })
     }
   }
 

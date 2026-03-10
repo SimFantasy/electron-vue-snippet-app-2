@@ -10,6 +10,9 @@ export function useTag() {
   /**
    * States
    */
+  // 从tagStore中结构的状态
+  const { tags, tagCount } = storeToRefs(tagStore)
+
   // 当前选中的标签
   const currentTag = ref('')
 
@@ -17,10 +20,7 @@ export function useTag() {
    * Getters
    */
   // 获取所有标签，并按字母排序
-  const tags = computed(() => [...tagStore.tags].sort((a, b) => a.localeCompare(b, 'zh-CN')))
-
-  // 标签的总数
-  const tagCount = computed(() => tagStore.tagCount)
+  const sortTags = computed(() => [...tagStore.tags].sort((a, b) => a.localeCompare(b, 'zh-CN')))
 
   // 当前是否有窜中的标签
   const hasSelectedTag = computed(() => currentTag.value !== null)
@@ -82,10 +82,11 @@ export function useTag() {
   return {
     // States
     currentTag,
-
-    // Getters
     tags,
     tagCount,
+
+    // Getters
+    sortTags,
     hasSelectedTag,
 
     // Actions

@@ -15,43 +15,38 @@ export function useCode() {
   /**
    * States
    */
+  // 结构CodeStore中的状态
+  const {
+    codes,
+    allCodes,
+    allCodesCount,
+    currentCodeId,
+    currentCode,
+    pagination,
+    isLoading,
+    filter,
+    trashCodes,
+    favoriteCodes,
+    uncategorizedCodes
+  } = storeToRefs(codeStore)
+
   // 无限滚动容器
-  const scrollContainerRef = useTemplateRef<HTMLElement>('scrollContainer')
+  const scrollContainerRef = ref<HTMLElement | null>(null)
   // 加载更多触发元素
-  const loadMoreTriggerRef = useTemplateRef<HTMLElement>('loadTrigger')
+  const loadMoreTriggerRef = ref<HTMLElement | null>(null)
   // 搜索关键字
   const searchKeyword = ref('')
   // 是否正在保存
   const isSaving = ref(false)
 
   /**
-   * Getters
-   */
-  // 代码片段列表
-  const codes = computed(() => codeStore.codes)
-  // 全部代码片段数量
-  const allCodesCount = computed(() => codeStore.allCodesCount)
-  // 当前选中的代码片段ID
-  const currentCodeId = computed(() => codeStore.currentCodeId)
-  // 当前选中的代码片段
-  const currentCode = computed(() => codeStore.currentCode)
-  // 分页
-  const pagination = computed(() => codeStore.pagination)
-  // 加载状态
-  const isLoading = computed(() => codeStore.isLoading)
-  // 筛选条件
-  const filter = computed(() => codeStore.filter)
-
-  // 回收站中的代码片段
-  const trashCodes = computed(() => codeStore.trashCodes)
-  // 收藏中的代码片段
-  const favoriteCodes = computed(() => codeStore.favoriteCodes)
-  // 未分类的代码片段
-  const uncategorizedCodes = computed(() => codeStore.uncategorizedCodes)
-
-  /**
    * Actions
    */
+
+  // 加载全部代码片段（用于统计）
+  const loadAllCodes = async () => {
+    await codeStore.loadAllCodes()
+  }
 
   // 加载更多
   const loadMore = async () => {
@@ -71,11 +66,6 @@ export function useCode() {
         distance: 50
       }
     )
-  }
-
-  // 获取所有代码片段数量
-  const getAllCodesCount = async () => {
-    await codeStore.getAllCodesCount()
   }
 
   // 加载代码片段列表
@@ -166,10 +156,22 @@ export function useCode() {
   // 创建代码片段
   const createCode = async (): Promise<number | null> => {
     try {
+      // 根据当前选中的导航分类确定分类ID
+      let categoryId: number
+      const currentId = categoryStore.currentCategoryId
+
+      if (currentId > 0) {
+        // 选中了具体分类，使用当前分类
+        categoryId = currentId
+      } else {
+        // 其他快捷导航（-99 全部代码片段，0 未分类， -1 收藏夹 -2 回收站），默认创建到未分类
+        categoryId = 0
+      }
+
       const data: CreateCodeInput = {
         title: '未命名代码片段',
         content: '',
-        category_id: categoryStore.currentCategoryId || 0,
+        category_id: categoryId,
         language: 'javascript',
         tags: []
       }
@@ -198,7 +200,7 @@ export function useCode() {
   // 删除代码片段
   const removeCode = async (id: number): Promise<boolean> => {
     try {
-      const code = codes.value.find((c) => c.id === id)
+      const code = allCodes.value.find((c) => c.id === id)
 
       if (code?.is_deleted) {
         // 在回收站，硬删除
@@ -342,6 +344,7 @@ export function useCode() {
 
     // Getters
     codes,
+    allCodes,
     allCodesCount,
     currentCodeId,
     currentCode,
@@ -353,9 +356,9 @@ export function useCode() {
     uncategorizedCodes,
 
     // Actions
+    loadAllCodes,
     loadMore,
     initInfiniteScroll,
-    getAllCodesCount,
     loadCodes,
     searchCodes,
     clearSearch,

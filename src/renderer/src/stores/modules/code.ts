@@ -4,11 +4,11 @@ export const useCodeStore = defineStore('code', () => {
   /**
    * States
    */
-  // 代码片段列表
+  // 代码片段列表（当前筛选条件下，用于展示）
   const codes = ref<Code[]>([])
 
-  // 全部代码总数（不随筛选变化）
-  const allCodesCount = ref(0)
+  // 全部代码片段（用于统计计算，不随筛选变化）
+  const allCodes = ref<Code[]>([])
 
   // 当前选中的代码片段ID
   const currentCodeId = ref<number | null>(null)
@@ -35,25 +35,41 @@ export const useCodeStore = defineStore('code', () => {
   /**
    * Getters
    */
+  // 全部代码总数（基于 allCodes，不随筛选变化）
+  const allCodesCount = computed(() => allCodes.value.filter((c) => !c.is_deleted).length)
+
+  // 回收站代码片段（基于 allCodes）
+  const trashCodes = computed(() => allCodes.value.filter((c) => c.is_deleted))
+
+  // 收藏夹代码片段（基于 allCodes）
+  const favoriteCodes = computed(() => allCodes.value.filter((c) => c.is_favorited && !c.is_deleted))
+
+  // 未分类代码片段（基于 allCodes）
+  const uncategorizedCodes = computed(() => allCodes.value.filter((c) => c.category_id === 0 && !c.is_deleted))
+
   // 获取当前选中的代码片段
   const currentCode = computed(() => {
     if (!currentCodeId.value) return null
-
     return codes.value.find((c) => c.id === currentCodeId.value)
   })
-
-  // 获取回收站中的代码片段
-  const trashCodes = computed(() => codes.value.filter((c) => c.is_deleted))
-
-  // 获取收藏夹中的代码片段
-  const favoriteCodes = computed(() => codes.value.filter((c) => c.is_favorited && !c.is_deleted))
-
-  // 获取未分类的代码片段
-  const uncategorizedCodes = computed(() => codes.value.filter((c) => c.category_id === 0 && !c.is_deleted))
 
   /**
    * Actions
    */
+
+  // 加载全部代码片段（用于统计）
+  const loadAllCodes = async (): Promise<void> => {
+    try {
+      // 获取全部代码片段，用于统计计算
+      const result = await window.api.code.getCodes({
+        limit: 10000, // 获取足够多的数据
+        isDeleted: undefined
+      })
+      allCodes.value = result
+    } catch (error) {
+      console.log('[Store] 获取全部代码片段失败:', error)
+    }
+  }
 
   // 加载代码片段
   const loadCodes = async (options: QueryOptions = {}, reset = false): Promise<void> => {
@@ -99,11 +115,6 @@ export const useCodeStore = defineStore('code', () => {
         codes.value.push(...result)
       }
 
-      // 更新全部代码片段总数
-      if (reset && !filter.value.tag && !filter.value.isDeleted && !filter.value.isFavorited && !filter.value.categoryId) {
-        allCodesCount.value = result.length
-      }
-
       // 判断是否还有更多
       pagination.value.hasMore = result.length === pagination.value.pageSize
 
@@ -118,19 +129,6 @@ export const useCodeStore = defineStore('code', () => {
     }
   }
 
-  // 获取全部代码片段总数
-  const getAllCodesCount = async () => {
-    try {
-      const result = await window.api.code.getCodes({
-        isDeleted: false,
-        limit: 10000 //获取最多的数据
-      })
-      allCodesCount.value = result.length
-    } catch (error) {
-      console.log('[Store] 获取全部代码片段数量失败:', error)
-    }
-  }
-
   // 加载更多代码片段
   const loadMoreCodes = async () => {
     if (!pagination.value.hasMore || isLoading.value) return
@@ -140,6 +138,12 @@ export const useCodeStore = defineStore('code', () => {
   // 创建代码片段
   const createCode = async (data: CreateCodeInput): Promise<number> => {
     const id = await window.api.code.create(data)
+
+    // 同步更新allCodes统计
+    const newCode = await window.api.code.getCodeById(id)
+    if (newCode) {
+      allCodes.value.unshift(newCode)
+    }
 
     // 创建成功后，如果是创建在当前筛选分类下，刷新列表
     if (!filter.value.categoryId || filter.value.categoryId === data.category_id) {
@@ -156,16 +160,24 @@ export const useCodeStore = defineStore('code', () => {
   const updateCode = async (id: number, data: UpdateCodeInput) => {
     await window.api.code.update(id, data)
 
-    // 更新本地数据
+    // 更新本地数据（codes）
     const index = codes.value.findIndex((c) => c.id === id)
-
     if (index !== -1) {
       const updateCode: Partial<Code> = {
         ...data,
         tags: data.tags && Array.isArray(data.tags) ? JSON.stringify(data.tags) : data.tags
       }
-
       codes.value[index] = { ...codes.value[index], ...updateCode }
+    }
+
+    // 同步更新 allCodes
+    const allIndex = allCodes.value.findIndex((c) => c.id === id)
+    if (allIndex !== -1) {
+      const updateCode: Partial<Code> = {
+        ...data,
+        tags: data.tags && Array.isArray(data.tags) ? JSON.stringify(data.tags) : data.tags
+      }
+      allCodes.value[allIndex] = { ...allCodes.value[allIndex], ...updateCode }
     }
   }
 
@@ -178,8 +190,20 @@ export const useCodeStore = defineStore('code', () => {
       await window.api.code.remove(id)
     }
 
-    // 从本地列表中移除
+    // 从本地列表中移除（codes）
     codes.value = codes.value.filter((c) => c.id !== id)
+
+    // 同步更新 allCodes
+    const index = allCodes.value.findIndex((c) => c.id === id)
+    if (index !== -1) {
+      if (isSoft) {
+        // 软删除：标记为已删除
+        allCodes.value[index].is_deleted = true
+      } else {
+        // 硬删除：从数组中移除
+        allCodes.value.splice(index, 1)
+      }
+    }
 
     // 如果删除的是当前选中的，则清空当前选中的
     if (currentCodeId.value === id) {
@@ -191,19 +215,28 @@ export const useCodeStore = defineStore('code', () => {
   const restoreCode = async (id: number) => {
     await window.api.code.restore(id)
 
-    // 从本地列表中删除，此时在回收站中，从回收站代码片段列表中移除
+    // 从本地列表中删除，此时在回收站中，从回收站代码片段列表中移除（codes）
     codes.value = codes.value.filter((c) => c.id !== id)
+
+    // 同步更新 allCodes
+    const index = allCodes.value.findIndex((c) => c.id === id)
+    if (index !== -1) {
+      allCodes.value[index].is_deleted = false
+    }
   }
 
   // 清空回收站
   const clearTrash = async () => {
     const count = await window.api.code.clearTrash()
 
-    // 清空本地回收站列表
+    // 清空本地回收站列表（codes）
     if (filter.value.isDeleted) {
       codes.value = []
       pagination.value.hasMore = false
     }
+
+    // 同步更新 allCodes，移除所有已删除的代码片段
+    allCodes.value = allCodes.value.filter((c) => !c.is_deleted)
 
     return count
   }
@@ -212,10 +245,16 @@ export const useCodeStore = defineStore('code', () => {
   const toggleFavorite = async (id: number): Promise<boolean> => {
     const result = await window.api.code.toggleFavorite(id)
 
-    // 更新本地数据
+    // 更新本地数据（codes）
     const code = codes.value.find((c) => c.id === id)
     if (code) {
       code.is_favorited = result
+    }
+
+    // 同步更新 allCodes
+    const allCode = allCodes.value.find((c) => c.id === id)
+    if (allCode) {
+      allCode.is_favorited = result
     }
 
     return result
@@ -225,8 +264,16 @@ export const useCodeStore = defineStore('code', () => {
   const batchUpdateCategory = async (codeIds: number[], categoryId: number) => {
     await window.api.code.batchUpdateCategory(codeIds, categoryId)
 
-    // 更新本地数据
+    // 更新本地数据（codes）
     codes.value = codes.value.map((code) => {
+      if (codeIds.includes(code.id)) {
+        return { ...code, category_id: categoryId }
+      }
+      return code
+    })
+
+    // 同步更新 allCodes
+    allCodes.value = allCodes.value.map((code) => {
       if (codeIds.includes(code.id)) {
         return { ...code, category_id: categoryId }
       }
@@ -260,6 +307,7 @@ export const useCodeStore = defineStore('code', () => {
   return {
     // States
     codes,
+    allCodes,
     allCodesCount,
     currentCodeId,
     pagination,
@@ -273,9 +321,9 @@ export const useCodeStore = defineStore('code', () => {
     uncategorizedCodes,
 
     // Actions
+    loadAllCodes,
     loadCodes,
     loadMoreCodes,
-    getAllCodesCount,
     createCode,
     updateCode,
     removeCode,

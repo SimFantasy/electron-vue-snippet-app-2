@@ -19,6 +19,18 @@ export function useSettings() {
   /**
    * States
    */
+  // 结构settingsStore中的状态
+  const {
+    settings,
+    isLoading,
+    currentTheme,
+    generalSettings,
+    appearanceSettings,
+    editorSettings,
+    shortcutSettings,
+    storageSettings
+  } = storeToRefs(settingsStore)
+
   // 设置弹窗显示状态
   const isSettingsVisible = ref(false)
   // 当前激活设置标签页
@@ -49,19 +61,6 @@ export function useSettings() {
   /**
    * Getters
    */
-  // 所有设置数据
-  const settings = computed(() => settingsStore.settings)
-  // 是否正在加载设置
-  const isLoading = computed(() => settingsStore.isLoading)
-  // 当前应用主题名称
-  const currentTheme = computed(() => settingsStore.currentTheme)
-
-  // 单独的设置选项
-  const generalSettings = computed(() => settingsStore.generalSettings)
-  const appearanceSettings = computed(() => settingsStore.appearanceSettings)
-  const editorSettings = computed(() => settingsStore.editorSettings)
-  const shortcutSettings = computed(() => settingsStore.shortcutSettings)
-  const storageSettings = computed(() => settingsStore.storageSettings)
 
   // 根据当前主题模式获取可用的主题列表
   const availableThemes = computed(() => {

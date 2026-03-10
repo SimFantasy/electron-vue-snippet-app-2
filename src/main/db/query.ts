@@ -142,8 +142,11 @@ export async function getCodes(options: QueryOptions = {}): Promise<Code[]> {
   let query = db('codes').select('*')
 
   // 默认不查询已软删除的代码
-  const isDeleted = options.isDeleted ?? false
-  query = query.where('is_deleted', isDeleted)
+  // const isDeleted = options.isDeleted ?? false
+  // query = query.where('is_deleted', isDeleted)
+  if (options.isDeleted !== undefined) {
+    query = query.where('is_deleted', options.isDeleted)
+  }
 
   // 按分类筛选
   if (categoryId !== undefined) {
