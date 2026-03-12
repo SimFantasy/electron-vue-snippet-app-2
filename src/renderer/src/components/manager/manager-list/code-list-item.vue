@@ -44,7 +44,7 @@ const contextMenuItems = computed<ContextMenuItem[]>(() => {
       icon: code.is_favorited ? 'tabler:star-filled' : 'tabler:star',
       onSelect: () => handleFavoriteToggle()
     },
-    { type: 'separator' },
+    { type: 'separator' as const },
     {
       label: isTrash ? '彻底删除代码片段' : '删除代码片段',
       icon: 'tabler:trash',

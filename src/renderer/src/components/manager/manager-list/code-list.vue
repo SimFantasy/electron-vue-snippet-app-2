@@ -1,30 +1,20 @@
 <script lang="ts" setup name="CodeList">
-import { useInfiniteScroll } from '@vueuse/core'
-import { useCode, useCategory } from '@/composables'
+import { useCode, useCategory, useCodeScroll } from '@/composables'
 
 /**
  * Hooks
  */
-const {
-  codes,
-  currentCodeId,
-  selectCode,
-  loadCodes,
-  loadMore,
-  isLoading,
-  pagination,
-  toggleFavorite,
-  removeCode,
-  restoreCode,
-  loadMoreTriggerRef,
-  scrollContainerRef
-} = useCode()
+const { codes, currentCodeId, selectCode, loadCodes, loadMore, isLoading, pagination, toggleFavorite, removeCode, restoreCode } =
+  useCode()
 const { categories, currentCategoryId } = useCategory()
 
 /**
  * States
  */
 const UEmpty = resolveComponent('UEmpty')
+
+// 无限滚动容器
+const scrollContainerRef = useTemplateRef<HTMLElement>('scrollContainer')
 
 /**
  * Getters
@@ -62,19 +52,15 @@ const handleRestoreCode = async (id: number) => {
   await restoreCode(id)
 }
 
-// 初始化无限滚动
-useInfiniteScroll(
-  scrollContainerRef,
-  async () => {
-    // 检查是否还有更多数据且不在加载中
-    if (pagination.value.hasMore && !isLoading.value) {
-      await loadMore()
-    }
-  },
-  {
-    distance: 50 // 距离底部距离阈值
-  }
-)
+// 初始化代码无限加载
+useCodeScroll({
+  containerRef: scrollContainerRef,
+  loadMore,
+  hasMore: computed(() => pagination.value.hasMore),
+  isLoading: computed(() => isLoading.value),
+  threshold: 100,
+  debounceDelay: 200
+})
 
 /**
  * Lifecycles
@@ -86,7 +72,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="scrollContainerRef" class="flex-1 flex-y-1 p-2 h-[calc(100vh-var(--spacing)*12-var(--spacing)*16)] overflow-y-auto">
+  <div ref="scrollContainer" class="flex-1 flex-y-1 p-2 h-[calc(100vh-var(--spacing)*12-var(--spacing)*16)] overflow-y-auto">
     <!-- 空状态 -->
     <UEmpty
       v-if="codes.length === 0 && !isLoading"
@@ -105,7 +91,7 @@ onMounted(() => {
       :code="code"
       :is-active="code.id === currentCodeId"
       :is-trash="isTrash"
-      :code-category="handleCurrentCategory(code.id)"
+      :code-category="handleCurrentCategory(code.category_id)"
       @on-selected="handleSelectCode"
       @on-favorite-toggle="handleToggleFavorite"
       @on-remove="handleRemoveCode"
@@ -113,7 +99,7 @@ onMounted(() => {
     />
 
     <!-- 加载更多触发器 -->
-    <div v-if="pagination.hasMore" ref="loadMoreTriggerRef" class="flex-center py-2">
+    <div v-show="pagination.hasMore" class="flex-center py-2">
       <UIcon v-if="isLoading" name="tabler:loader-2" class="size-5 animate-spin text-stone-300" />
       <span v-else class="text-xs text-stone-400">加载更多...</span>
     </div>

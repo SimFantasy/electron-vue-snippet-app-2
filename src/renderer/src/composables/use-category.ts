@@ -44,16 +44,10 @@ export function useCategory() {
 
   // 处理排序后的新顺序保存
   const handleReorder = async (newOrder: Category[]) => {
-    console.log(
-      '[Hooks] 开始保存排序:',
-      newOrder.map((c) => c.id)
-    )
     try {
       const sortedIds = newOrder.map((c) => c.id)
-      console.log('[Hooks] 发送 ID 列表:', sortedIds)
 
       await categoryStore.reorderCategories(sortedIds)
-      console.log('[Hooks] 排序保存成功')
     } catch (error) {
       console.log('[Hooks] 排序保存失败:', error)
       await categoryStore.loadCategories()

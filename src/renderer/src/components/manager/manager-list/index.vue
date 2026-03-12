@@ -1,10 +1,17 @@
-<script lang="ts" setup name="ManagerList"></script>
+<script lang="ts" setup name="ManagerList">
+import { useCategory } from '@/composables'
+
+/**
+ * Hooks
+ */
+const { currentCategoryId } = useCategory()
+</script>
 
 <template>
   <div class="col-span-5 manager-panel">
     <ListHeader />
 
-    <CodeList />
+    <CodeList :key="currentCategoryId" />
   </div>
 </template>
 

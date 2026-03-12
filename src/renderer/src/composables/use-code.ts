@@ -1,6 +1,6 @@
 import type { CreateCodeInput, QueryOptions, UpdateCodeInput } from '@shared/types'
 
-import { useDebounceFn, useInfiniteScroll } from '@vueuse/core'
+import { useDebounceFn } from '@vueuse/core'
 import { useCategoryStore, useCodeStore, useTagStore } from '@/stores'
 
 export function useCode() {
@@ -29,11 +29,8 @@ export function useCode() {
     favoriteCodes,
     uncategorizedCodes
   } = storeToRefs(codeStore)
+  const { currentCategoryId } = storeToRefs(categoryStore)
 
-  // 无限滚动容器
-  const scrollContainerRef = ref<HTMLElement | null>(null)
-  // 加载更多触发元素
-  const loadMoreTriggerRef = ref<HTMLElement | null>(null)
   // 搜索关键字
   const searchKeyword = ref('')
   // 是否正在保存
@@ -51,21 +48,6 @@ export function useCode() {
   // 加载更多
   const loadMore = async () => {
     await codeStore.loadMoreCodes()
-  }
-
-  // 初始化无限滚动
-  const initInfiniteScroll = () => {
-    useInfiniteScroll(
-      scrollContainerRef,
-      async () => {
-        if (pagination.value.hasMore && !isLoading.value) {
-          await loadMore()
-        }
-      },
-      {
-        distance: 50
-      }
-    )
   }
 
   // 加载代码片段列表
@@ -158,7 +140,7 @@ export function useCode() {
     try {
       // 根据当前选中的导航分类确定分类ID
       let categoryId: number
-      const currentId = categoryStore.currentCategoryId
+      const currentId = currentCategoryId.value
 
       if (currentId > 0) {
         // 选中了具体分类，使用当前分类
@@ -339,8 +321,6 @@ export function useCode() {
     // States
     searchKeyword,
     isSaving,
-    loadMoreTriggerRef,
-    scrollContainerRef,
 
     // Getters
     codes,
@@ -358,7 +338,6 @@ export function useCode() {
     // Actions
     loadAllCodes,
     loadMore,
-    initInfiniteScroll,
     loadCodes,
     searchCodes,
     clearSearch,

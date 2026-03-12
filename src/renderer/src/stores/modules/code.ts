@@ -16,7 +16,7 @@ export const useCodeStore = defineStore('code', () => {
   // 分页信息
   const pagination = ref({
     page: 1,
-    pageSize: 50,
+    pageSize: 20,
     total: 0,
     hasMore: true
   })
@@ -71,27 +71,43 @@ export const useCodeStore = defineStore('code', () => {
     }
   }
 
+  let currentLoadId = 0 // 加载 ID 计数器
+  let loadCodesLock = false // 保留锁防止翻页并发
   // 加载代码片段
   const loadCodes = async (options: QueryOptions = {}, reset = false): Promise<void> => {
-    isLoading.value = true
+    // 生成新的加载 ID
+    const loadId = ++currentLoadId
+
+    // 如果是重置操作，立即重置状态
+    if (reset) {
+      pagination.value.page = 1
+      pagination.value.hasMore = true
+      codes.value = []
+    }
+
+    // 只有翻页操作需要锁检查
+    if (!reset && loadCodesLock) {
+      return
+    }
+
+    if (!reset) {
+      loadCodesLock = true
+    }
 
     try {
-      // 如果是重置则清空列表和分页
-      if (reset) {
-        codes.value = []
-        pagination.value.page = 1
-        pagination.value.hasMore = true
-      }
+      isLoading.value = true
 
-      // 如果有标签筛选条件，使用专门的标签查询API
+      // 如果有标签筛选条件
       if (filter.value.tag) {
-        // 根据标签获取代码片段列表
         const result = await window.api.code.getCodesByTag(filter.value.tag)
 
-        // 标签查询结果直接赋值
+        // 检查是否过期
+        if (loadId !== currentLoadId) {
+          return
+        }
+
         codes.value = result
         pagination.value.hasMore = false
-        isLoading.value = false
         return
       }
 
@@ -108,7 +124,12 @@ export const useCodeStore = defineStore('code', () => {
       // 查询代码片段列表
       const result = await window.api.code.getCodes(queryOptions)
 
-      // 合并数据
+      // 关键：检查是否过期，只有最新的加载才能更新数据
+      if (loadId !== currentLoadId) {
+        return
+      }
+
+      // 更新数据
       if (reset) {
         codes.value = result
       } else {
@@ -118,20 +139,23 @@ export const useCodeStore = defineStore('code', () => {
       // 判断是否还有更多
       pagination.value.hasMore = result.length === pagination.value.pageSize
 
-      // 增加页码，
+      // 增加页码（只有成功的最新加载才能增加）
       if (result.length > 0) {
         pagination.value.page++
       }
     } catch (error) {
       console.log('[Store] 获取代码片段列表数据失败:', error)
     } finally {
+      if (!reset) {
+        loadCodesLock = false
+      }
       isLoading.value = false
     }
   }
 
   // 加载更多代码片段
   const loadMoreCodes = async () => {
-    if (!pagination.value.hasMore || isLoading.value) return
+    if (loadCodesLock || !pagination.value.hasMore) return
     await loadCodes({}, false)
   }
 

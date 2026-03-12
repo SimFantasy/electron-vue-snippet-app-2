@@ -39,10 +39,6 @@ const handleSelectCategory = (id: number) => {
 
 // 拖拽结束后的处理
 const handleDragEnd = () => {
-  console.log(
-    '[CategoryNavs] 拖拽结束，新顺序:',
-    categories.value.map((c) => c.id)
-  )
   handleReorder(categories.value)
 }
 </script>
