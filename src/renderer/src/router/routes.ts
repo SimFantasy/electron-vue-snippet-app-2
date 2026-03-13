@@ -12,5 +12,11 @@ export const routes = [
     name: 'Manager',
     component: () => import('@/views/manage.vue'),
     meta: { title: '代码片段管理' }
+  },
+  {
+    path: '/empty',
+    name: 'Empty',
+    component: () => import('@/views/empty.vue'),
+    meta: { title: '当前无代码片段' }
   }
 ] satisfies RouteRecordRaw[]

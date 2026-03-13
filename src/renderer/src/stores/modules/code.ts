@@ -181,29 +181,74 @@ export const useCodeStore = defineStore('code', () => {
   }
 
   // 更新代码片段
+  // 更新代码片段
   const updateCode = async (id: number, data: UpdateCodeInput) => {
     await window.api.code.update(id, data)
 
-    // 更新本地数据（codes）
+    // 更新本地数据（codes）- 使用新对象避免引用问题
     const index = codes.value.findIndex((c) => c.id === id)
     if (index !== -1) {
-      const updateCode: Partial<Code> = {
-        ...data,
-        tags: data.tags && Array.isArray(data.tags) ? JSON.stringify(data.tags) : data.tags
+      // 创建新对象，不要直接修改原对象
+      const updatedCode = { ...codes.value[index] }
+
+      // 处理 tags 字段
+      if (data.tags !== undefined) {
+        updatedCode.tags = Array.isArray(data.tags) ? JSON.stringify(data.tags) : data.tags
       }
-      codes.value[index] = { ...codes.value[index], ...updateCode }
+
+      // 更新其他字段
+      Object.keys(data).forEach((key) => {
+        if (key !== 'tags') {
+          ;(updatedCode as any)[key] = (data as any)[key]
+        }
+      })
+
+      // 替换整个对象触发响应式更新
+      codes.value[index] = updatedCode
     }
 
-    // 同步更新 allCodes
+    // 同步更新 allCodes（同样使用新对象）
     const allIndex = allCodes.value.findIndex((c) => c.id === id)
     if (allIndex !== -1) {
-      const updateCode: Partial<Code> = {
-        ...data,
-        tags: data.tags && Array.isArray(data.tags) ? JSON.stringify(data.tags) : data.tags
+      const updatedCode = { ...allCodes.value[allIndex] }
+
+      if (data.tags !== undefined) {
+        updatedCode.tags = Array.isArray(data.tags) ? JSON.stringify(data.tags) : data.tags
       }
-      allCodes.value[allIndex] = { ...allCodes.value[allIndex], ...updateCode }
+
+      Object.keys(data).forEach((key) => {
+        if (key !== 'tags') {
+          ;(updatedCode as any)[key] = (data as any)[key]
+        }
+      })
+
+      allCodes.value[allIndex] = updatedCode
     }
   }
+
+  // const updateCode = async (id: number, data: UpdateCodeInput) => {
+  //   await window.api.code.update(id, data)
+
+  //   // 更新本地数据（codes）
+  //   const index = codes.value.findIndex((c) => c.id === id)
+  //   if (index !== -1) {
+  //     const updateCode: Partial<Code> = {
+  //       ...data,
+  //       tags: data.tags && Array.isArray(data.tags) ? JSON.stringify(data.tags) : data.tags
+  //     }
+  //     codes.value[index] = { ...codes.value[index], ...updateCode }
+  //   }
+
+  //   // 同步更新 allCodes
+  //   const allIndex = allCodes.value.findIndex((c) => c.id === id)
+  //   if (allIndex !== -1) {
+  //     const updateCode: Partial<Code> = {
+  //       ...data,
+  //       tags: data.tags && Array.isArray(data.tags) ? JSON.stringify(data.tags) : data.tags
+  //     }
+  //     allCodes.value[allIndex] = { ...allCodes.value[allIndex], ...updateCode }
+  //   }
+  // }
 
   // 删除代码片段
   const removeCode = async (id: number, isSoft = true) => {

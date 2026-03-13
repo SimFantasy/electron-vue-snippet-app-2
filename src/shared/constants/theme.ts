@@ -9,9 +9,9 @@ import { ColorMode, ThemeColors } from '@shared/types'
 // CodeMirror主题分组（根据深浅模式分类）
 export const codemirrorThemes = {
   // 浅色主题
-  light: ['material-light', 'github-light', 'tomorrow', 'solarized-light'],
+  light: ['material-light', 'github-light', 'vscode-light', 'solarized-light'],
   // 深色主题
-  dark: ['material-dark', 'github-dark', 'tomorrow-night', 'solarized-dark', 'on-dark', 'dracula', 'monokai']
+  dark: ['material-dark', 'github-dark', 'vscode-dark', 'solarized-dark', 'on-dark', 'dracula', 'monokai']
 }
 
 // CodeMirror主题类型

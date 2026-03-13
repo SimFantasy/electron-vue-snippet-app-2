@@ -34,7 +34,22 @@ const confirmDialog = useTemplateRef('confirmDialog')
  * Getters
  */
 // 将Tags转换成数组
-const tags = computed(() => (code.tags ? JSON.parse(code.tags) : []))
+// const tags = computed(() => (code.tags ? JSON.parse(code.tags) : []))
+const tags = computed(() => {
+  if (!code.tags) return []
+
+  // 如果是数组，直接返回
+  if (Array.isArray(code.tags)) return code.tags
+
+  // 如果是JSON字符串，解析成数组
+  try {
+    const parsed = JSON.parse(code.tags)
+    return Array.isArray(parsed) ? parsed : [code.tags]
+  } catch (error) {
+    // 解析失败，说明是纯文本，包装成数组
+    return code.tags ? [code.tags] : []
+  }
+})
 
 //  右键菜单选项
 const contextMenuItems = computed<ContextMenuItem[]>(() => {

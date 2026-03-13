@@ -119,10 +119,13 @@ export function useCode() {
   }
 
   // 更新标签
-  const updateTags = async (id: number, tags: string | string[]) => {
+  const updateTags = async (id: number, tags: string[]) => {
+    console.log('updateTags called:', id, tags) // 添加日志
     await updateCode(id, { tags })
     // 刷新标签列表
     await tagStore.refreshTags()
+
+    console.log('#### updateTags called:', id, tags) // 添加日志
   }
 
   // 更新代码片段内容
